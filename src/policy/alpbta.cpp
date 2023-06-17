@@ -5,7 +5,7 @@
 #include<utility>
 #include<iostream>
 #include "../state/state.hpp"
-#include "./minmax.hpp"
+#include "./alpbta.hpp"
 
 
 /**
@@ -16,19 +16,22 @@
  * @return Move 
  */
 
-int minmaxRec(State* s, int depth, int me)
+int alphabetaRec(State* s, int depth, int me, int alpha, int beta)
 {
 	if(depth == 0) return s->evaluate();
 	
 	int val = 0;
 	if(!s->legal_actions.size())
 		s->get_legal_actions();
+
 	if(s->player == me)
 	{
 		val = INT_MIN;
 		for(auto i : s->legal_actions)
 		{
-			val = std::max(val, minmaxRec(s->next_state(i), depth-1, me));
+			val = std::max(val, alphabetaRec(s->next_state(i), depth-1, me, alpha, beta));
+			alpha = std::max(alpha, val);
+			if(alpha >= beta) break;
 		}
 	}
 	else
@@ -36,13 +39,15 @@ int minmaxRec(State* s, int depth, int me)
 		val = INT_MAX;
 		for(auto i : s->legal_actions)
 		{
-			val = std::min(val, minmaxRec(s->next_state(i), depth-1, me));
+			val = std::min(val, alphabetaRec(s->next_state(i), depth-1, me, alpha, beta));
+			beta = std::min(beta, val);
+			if(alpha <= beta) break;
 		}
 	}
 	return val;
 }
 
-Move minmax::get_move(State *state, int depth){
+Move alpbta::get_move(State *state, int depth){
 	if(!state->legal_actions.size())
 		state->get_legal_actions();
 	
@@ -52,7 +57,7 @@ Move minmax::get_move(State *state, int depth){
 	for(auto action : actions)
 	{
 		val = INT_MIN;
-		int tmp = std::max(val, minmaxRec(state->next_state(action), 5, state->player));
+		int tmp = std::max(val, alphabetaRec(state->next_state(action), 8, state->player, INT_MIN, INT_MAX));
 		if(val < tmp)
 		{
 			val = tmp;
