@@ -25,7 +25,7 @@ int State::evaluate(){
     for(int j = 0; j < BOARD_W; j++)
     {
       //calculate our grade
-      switch(board.board[1-player][i][j])
+      switch(board.board[player][i][j])
       {
         case 1://pawn
           our_grade += 2;
@@ -49,7 +49,7 @@ int State::evaluate(){
           continue;
       }
       //calculate our grade
-      switch(board.board[player][i][j])
+      switch(board.board[1-player][i][j])
       {
         case 1://pawn
           opponent_grade += 2;
@@ -100,7 +100,7 @@ State* State::next_state(Move move){
   }
   
   next.board[this->player][from.first][from.second] = 0;
-  next.board[this->player][to.first][to.second] = moved;//avoid repating
+  next.board[this->player][to.first][to.second] = moved;
   
   State* next_state = new State(next, 1-this->player);
   
