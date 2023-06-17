@@ -17,9 +17,9 @@ int State::evaluate(int me){
   //if (game_state == WIN) return 487630;
   
   int our_grade = 0;
-  int our_king = 0;
+  //int our_king = 0;
   int opponent_grade = 0;
-  int opponent_king = 0;
+  //int opponent_king = 0;
   int weight[7] = {0,10,50,30,30,90,200};
   for(int i = 0; i < BOARD_H; i++)
   {
@@ -27,8 +27,8 @@ int State::evaluate(int me){
     {
       //calculate our grade
       our_grade += weight[board.board[me][i][j]];
-      //calculate our grade
-      our_grade -= weight[board.board[1-me][i][j]];
+      //calculate opponent grade
+      opponent_grade += weight[board.board[1-me][i][j]];
     }
   }
   //our_grade += legal_actions().size();
