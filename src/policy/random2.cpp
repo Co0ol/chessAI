@@ -24,7 +24,7 @@ struct cmp
 {
   bool operator()(const bundle& a, const bundle& b)
   {
-    return a.grade < b.grade;
+    return a.grade > b.grade;
   }
 };
 

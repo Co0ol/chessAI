@@ -6,7 +6,7 @@
 
 /*You can modify these things in development for fast testing*/
 /*When TA run your program, we will use default settings (123, 10, 50)*/
-#define RANDOM_SEED 48763
+#define RANDOM_SEED 48744
 #define timeout 10
 #define MAX_STEP 50
 
@@ -18,13 +18,8 @@
 //   {" ", "♟", "♜", "♞", "♝", "♛", "♚"},
 //   {" ", "♙", "♖", "♘", "♗", "♕", "♔"},
 // };
-// #define PIECE_STR_LEN 2
-// const char PIECE_TABLE[2][7][5] = {
-//   {"  ", "wP", "wR", "wK", "wB", "wQ", "wK"},
-//   {"  ", "bP", "bR", "bK", "bB", "bQ", "bK"},
-// };
-#define PIECE_STR_LEN 1
+#define PIECE_STR_LEN 2
 const char PIECE_TABLE[2][7][5] = {
-  {" ", "I", "R", "K", "B", "Q", "K"},
-  {" ", "i", "r", "k", "b", "q", "k"},
+  {"  ", "○P", "○R", "○H", "○B", "○Q", "○K"},
+  {"  ", "●P", "●R", "●H", "●B", "●Q", "●K"},
 };
