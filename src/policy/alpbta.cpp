@@ -18,33 +18,29 @@
 
 int alphabetaRec(State* s, int depth, int me, int alpha, int beta)
 {
-	if(depth == 0) return s->evaluate();
+	if(depth == 0) return s->evaluate(me);
 	
-	int val = 0;
 	if(!s->legal_actions.size())
 		s->get_legal_actions();
 
 	if(s->player == me)
 	{
-		val = INT_MIN;
 		for(auto i : s->legal_actions)
 		{
-			val = std::max(val, alphabetaRec(s->next_state(i), depth-1, me, alpha, beta));
-			alpha = std::max(alpha, val);
+			alpha = std::max(alpha, alphabetaRec(s->next_state(i), depth-1, me, alpha, INT_MAX));
 			if(alpha >= beta) break;
 		}
+		return alpha;
 	}
 	else
 	{
-		val = INT_MAX;
 		for(auto i : s->legal_actions)
 		{
-			val = std::min(val, alphabetaRec(s->next_state(i), depth-1, me, alpha, beta));
-			beta = std::min(beta, val);
-			if(alpha <= beta) break;
+			beta = std::min(beta, alphabetaRec(s->next_state(i), depth-1, me, INT_MIN, beta));
+			if(alpha >= beta) break;
 		}
+		return beta;
 	}
-	return val;
 }
 
 Move alpbta::get_move(State *state, int depth){
@@ -52,12 +48,11 @@ Move alpbta::get_move(State *state, int depth){
 		state->get_legal_actions();
 	
 	auto actions = state->legal_actions;
-	Move ans;
-	int val;
+	Move ans = *(actions.begin());
+	int val = INT_MIN;
 	for(auto action : actions)
 	{
-		val = INT_MIN;
-		int tmp = std::max(val, alphabetaRec(state->next_state(action), 8, state->player, INT_MIN, INT_MAX));
+		int tmp = alphabetaRec(state->next_state(action), depth-1, state->player, val, INT_MAX);
 		if(val < tmp)
 		{
 			val = tmp;

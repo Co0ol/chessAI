@@ -12,9 +12,9 @@
  * 
  * @return int 
  */
-int State::evaluate(){
+int State::evaluate(int me){
   // [TODO] design your own evaluation function
-  if (game_state == WIN) return 487630;
+  //if (game_state == WIN) return 487630;
   
   int our_grade = 0;
   int our_king = 0;
@@ -26,14 +26,14 @@ int State::evaluate(){
     for(int j = 0; j < BOARD_W; j++)
     {
       //calculate our grade
-      our_grade += weight[board.board[player][i][j]];
+      our_grade += weight[board.board[me][i][j]];
       //calculate our grade
-      our_grade -= weight[board.board[1-player][i][j]];
+      our_grade -= weight[board.board[1-me][i][j]];
     }
   }
   //our_grade += legal_actions().size();
-  if(!our_king) return -487630;
-  if(!opponent_king) return 487630;
+  //if(!our_king) return -487630;
+  //if(!opponent_king) return 487630;
   return our_grade - opponent_grade;
 }
 
