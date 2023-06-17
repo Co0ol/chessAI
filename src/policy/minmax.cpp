@@ -52,7 +52,7 @@ Move minmax::get_move(State *state, int depth){
 	for(auto action : actions)
 	{
 		val = INT_MIN;
-		int tmp = std::max(val, minmaxRec(state->next_state(action), 4, state->player));
+		int tmp = std::max(val, minmaxRec(state->next_state(action), 5, state->player));
 		if(val < tmp)
 		{
 			val = tmp;

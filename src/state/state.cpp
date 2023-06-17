@@ -14,68 +14,26 @@
  */
 int State::evaluate(){
   // [TODO] design your own evaluation function
-  if (game_state == WIN) return 48763;
+  if (game_state == WIN) return 487630;
   
   int our_grade = 0;
   int our_king = 0;
   int opponent_grade = 0;
   int opponent_king = 0;
+  int weight[7] = {0,10,50,30,30,90,200};
   for(int i = 0; i < BOARD_H; i++)
   {
     for(int j = 0; j < BOARD_W; j++)
     {
       //calculate our grade
-      switch(board.board[player][i][j])
-      {
-        case 1://pawn
-          our_grade += 2;
-          break;
-        case 2://rook
-          our_grade += 6;
-          break;
-        case 3://knight
-          our_grade += 7;
-          break;
-        case 4://bishop
-          our_grade += 8;
-          break;
-        case 5://queen
-          our_grade += 20;
-          break;
-        case 6://king
-          our_king = 1;
-          break;
-        default://case 0
-          continue;
-      }
+      our_grade += weight[board.board[player][i][j]];
       //calculate our grade
-      switch(board.board[1-player][i][j])
-      {
-        case 1://pawn
-          opponent_grade += 2;
-          break;
-        case 2://rook
-          opponent_grade += 6;
-          break;
-        case 3://knight
-          opponent_grade += 7;
-          break;
-        case 4://bishop
-          opponent_grade += 8;
-          break;
-        case 5://queen
-          opponent_grade += 20;
-          break;
-        case 6://king
-          opponent_king = 1;
-          break;
-        default://case 0
-          continue;
-      }
+      our_grade -= weight[board.board[1-player][i][j]];
     }
   }
-  if(!our_king) return -48763;
-  if(!opponent_king) return 48763;
+  //our_grade += legal_actions().size();
+  if(!our_king) return -487630;
+  if(!opponent_king) return 487630;
   return our_grade - opponent_grade;
 }
 
