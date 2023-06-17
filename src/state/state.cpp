@@ -100,7 +100,7 @@ State* State::next_state(Move move){
   }
   
   next.board[this->player][from.first][from.second] = 0;
-  next.board[this->player][to.first][to.second] = moved;
+  next.board[this->player][to.first][to.second] = moved;//avoid repating
   
   State* next_state = new State(next, 1-this->player);
   

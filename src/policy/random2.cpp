@@ -18,17 +18,13 @@ struct bundle
   bundle(Move m, int g):move(m), grade(g){}
   Move move;
   int grade;
-};
-
-struct cmp
-{
-  bool operator()(const bundle& a, const bundle& b)
+  bool operator<(const bundle& b) const
   {
-    return a.grade > b.grade;
+    return grade < b.grade;
   }
 };
 
-std::set<bundle, cmp> move_priority;
+std::set<bundle> move_priority;
 
 Move Random2::get_move(State *state, int depth){
   if(!state->legal_actions.size())
