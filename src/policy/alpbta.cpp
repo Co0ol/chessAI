@@ -57,15 +57,19 @@ bool repeatMove(const Move& a, const Move& b)
 
 Move alpbta::get_move(State *state, int depth){
 	//avoid repeating
-	Move previous;
+	std::vector<Move> previous;
 	std::ifstream file("prevoius.log");
 	if (file) {
 		std::string str;
-		std::getline(file, str);
-		previous.first.first = str[0] - '0';
-		previous.first.second = str[1] - '0';
-		previous.second.first = str[3] - '0';
-		previous.second.second = str[4] - '0';
+		while(std::getline(file, str))
+		{
+			Move tmp;
+			tmp.first.first = str[0] - '0';
+			tmp.first.second = str[1] - '0';
+			tmp.second.first = str[3] - '0';
+			tmp.second.second = str[4] - '0';
+			previous.push_back(tmp);
+		}
 	}file.close();
 	
 	if(!state->legal_actions.size()) state->get_legal_actions();
@@ -79,7 +83,12 @@ Move alpbta::get_move(State *state, int depth){
 		if(val < tmp)
 		{
 			int noSame = 1;
-			if(repeatMove(action, previous)) noSame = 0;
+			for(auto i : previous)
+				if(repeatMove(action, i))
+				{
+					noSame = 0;
+					break;
+				}
 			if(noSame)
 			{
 				val = tmp;
@@ -87,10 +96,12 @@ Move alpbta::get_move(State *state, int depth){
 			}
 		}
 	}
-	previous = ans;
+	previous.push_back(ans);
+	if(previous.size() > 5)previous.erase(previous.begin());
 	std::ofstream write;
 	write.open("prevoius.log", std::ios::out | std::ios::trunc);
-	write << previous.first.first << previous.first.second << " " << previous.second.first << previous.second.second << std::endl;
+	for(auto i : previous)
+		write << i.first.first << i.first.second << " " << i.second.first << i.second.second << std::endl;
 	write.close();
 	return ans;
 }
