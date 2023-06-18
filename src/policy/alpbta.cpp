@@ -97,11 +97,12 @@ Move alpbta::get_move(State *state, int depth){
 		}
 	}
 	previous.push_back(ans);
-	if(previous.size() > 5)previous.erase(previous.begin());
+	if(previous.size() > 3)previous.erase(previous.begin());
 	std::ofstream write;
 	write.open("prevoius.log", std::ios::out | std::ios::trunc);
 	for(auto i : previous)
-		write << i.first.first << i.first.second << " " << i.second.first << i.second.second << std::endl;
+		write << i.first.first << i.first.second << " " 
+		<< i.second.first << i.second.second << std::endl;
 	write.close();
 	return ans;
 }
