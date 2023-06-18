@@ -92,8 +92,9 @@ Move alpbta::get_move(State *state, int depth){
 	}
 	previous= ans;
 	file = fopen("prevoius.log", "w");
-	freopen("prevoius.log", "w", stderr);
-	std::cerr << previous.first.first << previous.first.second << " " << previous.second.first << previous.second.second << std::endl;
+	freopen("prevoius.log", "w", stdout);
+	std::cout << previous.first.first << previous.first.second << " " << previous.second.first << previous.second.second << std::endl;
 	fclose(file);
+	freopen("/dev/tty", "w", stdout);
 	return ans;
 }

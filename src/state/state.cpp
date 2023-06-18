@@ -14,12 +14,9 @@
  */
 int State::evaluate(int me){
   // [TODO] design your own evaluation function
-  //if (game_state == WIN) return 487630;
-  
+ 
   int our_grade = 0;
-  //int our_king = 0;
   int opponent_grade = 0;
-  //int opponent_king = 0;
   int weight[7] = {0,10,50,30,30,90,200};
   for(int i = 0; i < BOARD_H; i++)
   {
@@ -31,9 +28,16 @@ int State::evaluate(int me){
       opponent_grade += weight[board.board[1-me][i][j]];
     }
   }
-  //our_grade += legal_actions().size();
-  //if(!our_king) return -487630;
-  //if(!opponent_king) return 487630;
+  if(!legal_actions.size())
+		get_legal_actions();
+  if(!oppo_actions.size())
+		get_opponent_actions();
+
+  if (game_state == WIN) return 4876300;
+  if (oppo_win) return -4876300;
+
+  our_grade += legal_actions.size();
+  opponent_grade += oppo_actions.size();
   return our_grade - opponent_grade;
 }
 
@@ -219,6 +223,144 @@ void State::get_legal_actions(){
               oppn_piece = oppn_board[p[0]][p[1]];
               if(oppn_piece==6){
                 this->game_state = WIN;
+                this->legal_actions = all_actions;
+                return;
+              }
+            }
+            break;
+        }
+      }
+    }
+  }
+  //std::cout << "\n";
+  this->legal_actions = all_actions;
+}
+
+void State::get_opponent_actions(){
+  // [Optional]
+  // This method is not very efficient
+  // You can redesign it
+  this->game_state = NONE;
+  std::vector<Move> all_actions;
+  auto self_board = this->board.board[1-this->player];
+  auto oppn_board = this->board.board[this->player];
+  
+  int now_piece, oppn_piece;
+  for(int i=0; i<BOARD_H; i+=1){
+    for(int j=0; j<BOARD_W; j+=1){
+      if((now_piece=self_board[i][j])){
+        // std::cout << this->player << "," << now_piece << ' ';
+        switch (now_piece){
+          case 1: //pawn
+            if(this->player && i<BOARD_H-1){
+              //black
+              if(!oppn_board[i+1][j] && !self_board[i+1][j])
+                all_actions.push_back(Move(Point(i, j), Point(i+1, j)));
+              if(j<BOARD_W-1 && (oppn_piece=oppn_board[i+1][j+1])>0){
+                all_actions.push_back(Move(Point(i, j), Point(i+1, j+1)));
+                if(oppn_piece==6){
+                  this->oppo_win = WIN;
+                  this->oppo_actions = all_actions;
+                  return;
+                }
+              }
+              if(j>0 && (oppn_piece=oppn_board[i+1][j-1])>0){
+                all_actions.push_back(Move(Point(i, j), Point(i+1, j-1)));
+                if(oppn_piece==6){
+                  this->oppo_win = WIN;
+                  this->oppo_actions = all_actions;
+                  return;
+                }
+              }
+            }else if(!this->player && i>0){
+              //white
+              if(!oppn_board[i-1][j] && !self_board[i-1][j])
+                all_actions.push_back(Move(Point(i, j), Point(i-1, j)));
+              if(j<BOARD_W-1 && (oppn_piece=oppn_board[i-1][j+1])>0){
+                all_actions.push_back(Move(Point(i, j), Point(i-1, j+1)));
+                if(oppn_piece==6){
+                  this->oppo_win = WIN;
+                  this->oppo_actions = all_actions;
+                  return;
+                }
+              }
+              if(j>0 && (oppn_piece=oppn_board[i-1][j-1])>0){
+                all_actions.push_back(Move(Point(i, j), Point(i-1, j-1)));
+                if(oppn_piece==6){
+                  this->oppo_win = WIN;
+                  this->oppo_actions = all_actions;
+                  return;
+                }
+              }
+            }
+            break;
+          
+          case 2: //rook
+          case 4: //bishop
+          case 5: //queen
+            int st, end;
+            switch (now_piece){
+              case 2: st=0; end=4; break; //rook
+              case 4: st=4; end=8; break; //bishop
+              case 5: st=0; end=8; break; //queen
+              default: st=0; end=-1;
+            }
+            for(int part=st; part<end; part+=1){
+              auto move_list = move_table_rook_bishop[part];
+              for(int k=0; k<std::max(BOARD_H, BOARD_W); k+=1){
+                int p[2] = {move_list[k][0] + i, move_list[k][1] + j};
+                
+                if(p[0]>=BOARD_H || p[0]<0 || p[1]>=BOARD_W || p[1]<0) break;
+                now_piece = self_board[p[0]][p[1]];
+                if(now_piece) break;
+                
+                all_actions.push_back(Move(Point(i, j), Point(p[0], p[1])));
+                
+                oppn_piece = oppn_board[p[0]][p[1]];
+                if(oppn_piece){
+                  if(oppn_piece==6){
+                    this->oppo_win = WIN;
+                    this->oppo_actions = all_actions;
+                    return;
+                  }else
+                    break;
+                };
+              }
+            }
+            break;
+          
+          case 3: //knight
+            for(auto move: move_table_knight){
+              int x = move[0] + i;
+              int y = move[1] + j;
+              
+              if(x>=BOARD_H || x<0 || y>=BOARD_W || y<0) continue;
+              now_piece = self_board[x][y];
+              if(now_piece) continue;
+              all_actions.push_back(Move(Point(i, j), Point(x, y)));
+              
+              oppn_piece = oppn_board[x][y];
+              if(oppn_piece==6){
+                this->oppo_win = WIN;
+                this->oppo_actions = all_actions;
+                return;
+              }
+            }
+            break;
+          
+          case 6: //king
+            for(auto move: move_table_king){
+              int p[2] = {move[0] + i, move[1] + j};
+              
+              if(p[0]>=BOARD_H || p[0]<0 || p[1]>=BOARD_W || p[1]<0) continue;
+              now_piece = self_board[p[0]][p[1]];
+              if(now_piece) continue;
+              
+              all_actions.push_back(Move(Point(i, j), Point(p[0], p[1])));
+              
+              oppn_piece = oppn_board[p[0]][p[1]];
+              if(oppn_piece==6){
+                this->oppo_win = WIN;
                 this->legal_actions = all_actions;
                 return;
               }

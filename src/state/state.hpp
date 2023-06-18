@@ -38,7 +38,7 @@ enum GameState {
   UNKNOWN = 0,
   WIN,
   DRAW,
-  NONE
+  NONE,
 };
 
 
@@ -49,7 +49,9 @@ class State{
     Board board;
     int player = 0;
     std::vector<Move> legal_actions;
-    
+    std::vector<Move> oppo_actions;
+    int oppo_win = 0;
+
     State(){};
     State(int player): player(player){};
     State(Board board): board(board){};
@@ -58,6 +60,7 @@ class State{
     int evaluate(int me);
     State* next_state(Move move);
     void get_legal_actions();
+    void get_opponent_actions();
     std::string encode_output();
     std::string encode_state();
 };
