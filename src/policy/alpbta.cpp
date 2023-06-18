@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include<climits>
+#include<queue>
 #include<algorithm>
 #include <set>
 #include<utility>
@@ -43,7 +44,29 @@ int alphabetaRec(State* s, int depth, int me, int alpha, int beta)
 	}
 }
 
+bool repeatMove(const Move& a, const Move& b)
+{
+	if(a.first.first == b.second.first
+	&& a.first.second == b.second.second
+	&& a.second.first == b.first.first
+	&& a.second.second == b.first.first) return 1;
+	else return 0;
+}
+
 Move alpbta::get_move(State *state, int depth){
+	//avoid repeating
+	Move previous;
+	FILE* file = fopen("prevoius.log", "r");
+	if (file != nullptr) {
+			previous.first.first = fgetc(file) - '0';
+			previous.first.second = fgetc(file) - '0';
+			fgetc(file);
+			previous.second.first = fgetc(file) - '0';
+			previous.second.second = fgetc(file) - '0';
+			fgetc(file);
+		fclose(file);
+	}
+	
 	if(!state->legal_actions.size())
 		state->get_legal_actions();
 	
@@ -55,9 +78,22 @@ Move alpbta::get_move(State *state, int depth){
 		int tmp = alphabetaRec(state->next_state(action), depth-1, state->player, val, INT_MAX);
 		if(val < tmp)
 		{
-			val = tmp;
-			ans = action;
+			int noSame = 1;
+			if(repeatMove(action, previous))
+			{
+				noSame = 0;
+			}
+			if(noSame)
+			{
+				val = tmp;
+				ans = action;
+			}
 		}
 	}
+	previous= ans;
+	file = fopen("prevoius.log", "w");
+	freopen("prevoius.log", "w", stderr);
+	std::cerr << previous.first.first << previous.first.second << " " << previous.second.first << previous.second.second << std::endl;
+	fclose(file);
 	return ans;
 }
