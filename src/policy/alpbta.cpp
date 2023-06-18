@@ -49,7 +49,7 @@ bool repeatMove(const Move& a, const Move& b)
 	if(a.first.first == b.second.first
 	&& a.first.second == b.second.second
 	&& a.second.first == b.first.first
-	&& a.second.second == b.first.first) return 1;
+	&& a.second.second == b.first.second) return 1;
 	else return 0;
 }
 
