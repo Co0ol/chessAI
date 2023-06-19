@@ -8,7 +8,7 @@
 #include<utility>
 #include<iostream>
 #include "../state/state.hpp"
-#include "./alpbta.hpp"
+#include "./submission.hpp"
 
 
 /**
@@ -19,7 +19,7 @@
  * @return Move 
  */
 
-int alphabetaRec(State* s, int depth, int me, int alpha, int beta)
+int submissionRec(State* s, int depth, int me, int alpha, int beta)
 {
 	if(depth == 0) return s->evaluate(me);
 	
@@ -30,7 +30,7 @@ int alphabetaRec(State* s, int depth, int me, int alpha, int beta)
 	{
 		for(auto i : s->legal_actions)
 		{
-			alpha = std::max(alpha, alphabetaRec(s->next_state(i), depth-1, me, alpha, INT_MAX));
+			alpha = std::max(alpha, submissionRec(s->next_state(i), depth-1, me, alpha, INT_MAX));
 			if(alpha >= beta) break;
 		}
 		return alpha;
@@ -39,14 +39,14 @@ int alphabetaRec(State* s, int depth, int me, int alpha, int beta)
 	{
 		for(auto i : s->legal_actions)
 		{
-			beta = std::min(beta, alphabetaRec(s->next_state(i), depth-1, me, INT_MIN, beta));
+			beta = std::min(beta, submissionRec(s->next_state(i), depth-1, me, INT_MIN, beta));
 			if(alpha >= beta) break;
 		}
 		return beta;
 	}
 }
 
-bool repeatMove(const Move& a, const Move& b)
+bool repeatMoves(const Move& a, const Move& b)
 {
 	if(a.first.first == b.second.first
 	&& a.first.second == b.second.second
@@ -55,7 +55,7 @@ bool repeatMove(const Move& a, const Move& b)
 	else return 0;
 }
 
-Move alpbta::get_move(State *state, int depth){
+Move submission::get_move(State *state, int depth){
 	//avoid repeating
 	std::vector<Move> previous;
 	std::ifstream file("prevoius.log");
@@ -79,12 +79,12 @@ Move alpbta::get_move(State *state, int depth){
 	int val = INT_MIN;
 	for(auto action : actions)
 	{
-		int tmp = alphabetaRec(state->next_state(action), depth-1, state->player, val, INT_MAX);
+		int tmp = submissionRec(state->next_state(action), depth-1, state->player, val, INT_MAX);
 		if(val < tmp)
 		{
 			int noSame = 1;
 			for(auto i : previous)
-				if(repeatMove(action, i))
+				if(repeatMoves(action, i))
 				{
 					noSame = 0;
 					break;

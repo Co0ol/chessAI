@@ -8,7 +8,7 @@
  */
 //static Move previous;
 
-class alpbta{
+class submission{
 public:
   static Move get_move(State *state, int depth);
 };

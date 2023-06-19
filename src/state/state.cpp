@@ -31,7 +31,7 @@ int State::evaluate(int me){
   if(!legal_actions.size())
 		get_legal_actions();
   if(!oppo_actions.size())
-		get_opponent_actions();
+		get_opponent_actions(me);
 
   if (game_state == WIN) return 4876300;
   if (oppo_win) return -4876300;
@@ -236,14 +236,14 @@ void State::get_legal_actions(){
   this->legal_actions = all_actions;
 }
 
-void State::get_opponent_actions(){
+void State::get_opponent_actions(int me){
   // [Optional]
   // This method is not very efficient
   // You can redesign it
   this->game_state = NONE;
   std::vector<Move> all_actions;
-  auto self_board = this->board.board[1-this->player];
-  auto oppn_board = this->board.board[this->player];
+  auto self_board = this->board.board[1-me];
+  auto oppn_board = this->board.board[me];
   
   int now_piece, oppn_piece;
   for(int i=0; i<BOARD_H; i+=1){

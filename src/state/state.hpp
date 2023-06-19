@@ -60,7 +60,7 @@ class State{
     int evaluate(int me);
     State* next_state(Move move);
     void get_legal_actions();
-    void get_opponent_actions();
+    void get_opponent_actions(int me);
     std::string encode_output();
     std::string encode_state();
 };
