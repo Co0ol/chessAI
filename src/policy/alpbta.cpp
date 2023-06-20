@@ -30,7 +30,7 @@ int alphabetaRec(State* s, int depth, int me, int alpha, int beta)
 	{
 		for(auto i : s->legal_actions)
 		{
-			alpha = std::max(alpha, alphabetaRec(s->next_state(i), depth-1, me, alpha, INT_MAX));
+			alpha = std::max(alpha, alphabetaRec(s->next_state(i), depth-1, me, alpha, beta));
 			if(alpha >= beta) break;
 		}
 		return alpha;
@@ -39,7 +39,7 @@ int alphabetaRec(State* s, int depth, int me, int alpha, int beta)
 	{
 		for(auto i : s->legal_actions)
 		{
-			beta = std::min(beta, alphabetaRec(s->next_state(i), depth-1, me, INT_MIN, beta));
+			beta = std::min(beta, alphabetaRec(s->next_state(i), depth-1, me, alpha, beta));
 			if(alpha >= beta) break;
 		}
 		return beta;
